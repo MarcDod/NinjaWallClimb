@@ -1,9 +1,12 @@
 <component name="libraryTable">
   <library name="org.json">
     <CLASSES>
-      <root url="jar://D:/Marcs Daten/Desktop/org.json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/jdom-2.0.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libraries/org.json.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/libraries/jdom-2.0.6-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES />
   </library>
 </component>
