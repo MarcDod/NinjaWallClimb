@@ -1,0 +1,9 @@
+{
+
+  "name" : "ninja",
+  "delay": 100,
+  "AddOns": [
+      "Bandana"
+  ]
+
+}
