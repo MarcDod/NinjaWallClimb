@@ -2,6 +2,7 @@
 
   "name" : "ninja",
   "delay": 100,
+  "jumpDelay": 20,
   "AddOns": [
       "Bandana"
   ]

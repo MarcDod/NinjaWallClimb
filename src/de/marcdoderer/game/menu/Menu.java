@@ -10,6 +10,7 @@ import de.marcdoderer.game.utils.Utils;
 import de.marcdoderer.json.JSONUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -37,7 +38,7 @@ public class Menu extends State {
     public Menu(StateManager stm){
         super(stm);
 
-        characters[currentCharacter].getWalkleft().startSprite();
+        characters[currentCharacter].getWalkLeft().startSprite();
     }
 
 
@@ -46,13 +47,13 @@ public class Menu extends State {
      * @param direction
      */
     private void changeCharacter(int direction){
-        characters[currentCharacter].getWalkleft().stopSprite();
+        characters[currentCharacter].getWalkLeft().stopSprite();
         if (direction == 1) {
             currentCharacter = (currentCharacter < characters.length - 1) ? (currentCharacter += direction) : 0;
         }else{
             currentCharacter = (currentCharacter > 0) ? (currentCharacter += direction) : characters.length - 1;
         }
-        characters[currentCharacter].getWalkleft().startSprite();
+        characters[currentCharacter].getWalkLeft().startSprite();
     }
 
 
@@ -81,7 +82,7 @@ public class Menu extends State {
         }
 
         // Character
-        g.drawImage(characters[currentCharacter].getWalkleft().getSprite(), 123, 175, null);
+        g.drawImage(characters[currentCharacter].getWalkLeft().getSprite(), 123, 175, null);
 
         // AddOn
         if(characters[currentCharacter].getAddonSprite() != null)
@@ -153,6 +154,7 @@ public class Menu extends State {
                 System.exit(0);
                 break;
             case "Play":
+                this.cleanUp();
                 stm.pushState(new Game(stm, characters[currentCharacter]));
                 break;
             default:
@@ -165,7 +167,7 @@ public class Menu extends State {
         for(Sprite s : background){
             s.stopSprite();
         }
-        characters[currentCharacter].getWalkleft().stopSprite();
+        characters[currentCharacter].getWalkLeft().stopSprite();
 
         if(characters[currentCharacter].getAddonSprite() == null) return;
 
@@ -177,7 +179,7 @@ public class Menu extends State {
         for(Sprite s : background){
             s.startSprite();
         }
-        characters[currentCharacter].getWalkleft().startSprite();
+        characters[currentCharacter].getWalkLeft().startSprite();
 
         if(characters[currentCharacter].getAddonSprite() == null) return;
 
@@ -232,7 +234,7 @@ public class Menu extends State {
                 for(int i = 0; i < addons.length(); i++){
                     addonStrings[i + 1] = addons.getString(i);
                 }
-                characters[j] = new Character(character.getString("name"), addonStrings, character.getInt("delay"));
+                characters[j] = new Character(character.getString("name"), addonStrings, character.getInt("delay"), character.getInt("jumpDelay"));
             }
 
 

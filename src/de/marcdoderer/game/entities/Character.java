@@ -2,7 +2,6 @@ package de.marcdoderer.game.entities;
 
 import de.marcdoderer.game.utils.Sprite;
 
-
 import java.io.IOException;
 
 /**
@@ -20,7 +19,7 @@ public class Character {
      * @param delay
      * @throws IOException
      */
-    public Character(String name, String[] addons, int delay) throws IOException {
+    public Character(String name, String[] addons, int delay, int jumpDelay) throws IOException {
         this.addon = 0;
         this.addonImages = new Sprite[addons.length];
         sprites = new Sprite[addons.length + 1][];
@@ -28,8 +27,8 @@ public class Character {
             sprites[i] = new Sprite[4];
             sprites[i][0] = new Sprite("rsc/ninja/"+ name + addons[i] + "/links", delay);
             sprites[i][1] = new Sprite("rsc/ninja/" + name + addons[i] + "/rechts", delay);
-            sprites[i][2] = new Sprite("rsc/ninja/jump/"+ name + addons[i] + "/links", delay);
-            sprites[i][3] = new Sprite("rsc/ninja/jump/" + name + addons[i] + "/rechts", delay);
+            sprites[i][2] = new Sprite("rsc/ninja/jump/"+ name + addons[i] + "/links", jumpDelay);
+            sprites[i][3] = new Sprite("rsc/ninja/jump/" + name + addons[i] + "/rechts", jumpDelay);
         }
         for(int i = 1; i < addonImages.length; i++){
             addonImages[i] = new Sprite("rsc/addOn/" + addons[i], delay);
@@ -52,7 +51,7 @@ public class Character {
      * @param direction
      */
     public void changeAddon(int direction) {
-        this.getWalkleft().stopSprite();
+        this.getWalkLeft().stopSprite();
         if(addon != 0)
             this.addonImages[addon].stopSprite();
 
@@ -61,13 +60,13 @@ public class Character {
         }else{
             addon = (addon > 0) ? (addon += direction) : addonImages.length - 1;
         }
-        this.getWalkleft().startSprite();
+        this.getWalkLeft().startSprite();
         if(addon != 0)
             this.addonImages[addon].startSprite();
     }
 
 
-    public Sprite getWalkleft(){
+    public Sprite getWalkLeft(){
         return this.sprites[addon][0];
     }
     public Sprite getWalkRight(){
@@ -76,7 +75,7 @@ public class Character {
     public Sprite getJumpLeft(){
         return this.sprites[addon][2];
     }
-    public Sprite getJumpsRight(){
+    public Sprite getJumpRight(){
         return this.sprites[addon][3];
     }
 }

@@ -20,33 +20,30 @@ public class Game extends State {
     private Sprite background;
     private Wall walls[];
 
+    private boolean pause;
+
     public Game(StateManager stm, Character character) {
         super(stm);
-        this.ninja = new Ninja(character, 100, 100);
-    }
-
-    @Override
-    public void init() {
-        try{
-            this.background = new Sprite("rsc/wallpaper/blueCity", 80);
-            background.startSprite();
-            BufferedImage[] walls = Utils.loadPictures("rsc/wallpaper/wall");
-            Wall.loadWalls(walls);
-            this.walls = new Wall[6];
-            for(int i = 0; i < this.walls.length; i++){
-                int x = (i < this.walls.length / 2) ? 0 : Gui.SCREEN_WIDTH - this.walls[i - 1].getWidth();
-                int y = (i < this.walls.length) ? i : i - 3;
-                this.walls[i] = new Wall(x, (y - 1) * (Gui.SCREEN_HEIGHT / 2));
-            }
-        }catch(IllegalArgumentException | IOException e){
-            e.printStackTrace();
-        }
+        this.ninja = new Ninja(character, this.walls[0].getWidth(), Gui.SCREEN_HEIGHT / 2 + Gui.SCREEN_HEIGHT / 6, walls[0].getWidth(), Gui.SCREEN_WIDTH - walls[walls.length - 1].getWidth());
+        ninja.startSprite();
     }
 
     @Override
     public void update() {
+
+        if(pause) return;
+
+        ninja.update();
         for(Wall w: walls){
             w.update();
+        }
+
+
+        if(ninja.getState() == Ninja.STATE.WALK) return;
+        if (ninja.hit(new int[]{Gui.SCREEN_WIDTH - walls[walls.length - 1].getWidth(),
+                0, walls[0].getWidth(), Gui.SCREEN_HEIGHT}) || ninja.hit(new int[]{0,
+                0, walls[0].getWidth(), Gui.SCREEN_HEIGHT})) {
+            ninja.jumpOff();
         }
     }
 
@@ -69,7 +66,15 @@ public class Game extends State {
                 stm.popState();
                 break;
             case KeyEvent.VK_SPACE:
-                ninja.startSprite();
+                if (pause) break;
+                ninja.jump();
+                break;
+            case KeyEvent.VK_ESCAPE:
+                pause = !pause;
+                if(!pause)
+                    ressume();
+                else
+                    cleanUp();
                 break;
             default:
                 break;
@@ -104,6 +109,26 @@ public class Game extends State {
 
     @Override
     public void ressume() {
+        ninja.startSprite();
+        background.startSprite();
+    }
 
+    @Override
+    public void init() {
+        this.pause = false;
+        try{
+            this.background = new Sprite("rsc/wallpaper/blueCity", 80);
+            background.startSprite();
+            BufferedImage[] walls = Utils.loadPictures("rsc/wallpaper/wall");
+            Wall.loadWalls(walls);
+            this.walls = new Wall[6];
+            for(int i = 0; i < this.walls.length; i++){
+                int x = (i < this.walls.length / 2) ? 0 : Gui.SCREEN_WIDTH - this.walls[i - 1].getWidth();
+                int y = (i < this.walls.length / 2) ? i : i - 3;
+                this.walls[i] = new Wall(x, (y - 1) * (Gui.SCREEN_HEIGHT / 2));
+            }
+        }catch(IllegalArgumentException | IOException e){
+            e.printStackTrace();
+        }
     }
 }

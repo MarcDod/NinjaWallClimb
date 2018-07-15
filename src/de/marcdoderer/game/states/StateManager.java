@@ -58,7 +58,6 @@ public class StateManager {
      * @param state
      */
     public void pushState(State state){
-        this.states.peek().cleanUp();
         this.states.push(state);
     }
 
