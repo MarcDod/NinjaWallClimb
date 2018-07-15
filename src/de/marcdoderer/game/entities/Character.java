@@ -14,24 +14,28 @@ public class Character {
 
     /**
      * load every sprite of a character and every addon.
-     * @param name
-     * @param addons
-     * @param delay
-     * @throws IOException
+     * @param name Character name for folder structure
+     * @param addons Names of the addons for folder structure
+     * @param delay Milliseconds between the frames while walking
+     * @param jumpDelay Milliseconds between the frames while jumping
+     * @param walkOffset Offset how many pictures should be only played once while walking
+     * @param jumpOffset Offset how many pictures should be only played once while jumping
+     * @param addonOffset Offset how many pictures should be only played once while for the addons
+     * @throws IOException Thrown if Sprite Image couldnot be loaded
      */
-    public Character(String name, String[] addons, int delay, int jumpDelay) throws IOException {
+    public Character(String name, String[] addons, int delay, int jumpDelay, int walkOffset, int jumpOffset, int addonOffset) throws IOException {
         this.addon = 0;
         this.addonImages = new Sprite[addons.length];
         sprites = new Sprite[addons.length + 1][];
         for(int i = 0; i < addons.length; i++){
             sprites[i] = new Sprite[4];
-            sprites[i][0] = new Sprite("rsc/ninja/"+ name + addons[i] + "/links", delay);
-            sprites[i][1] = new Sprite("rsc/ninja/" + name + addons[i] + "/rechts", delay);
-            sprites[i][2] = new Sprite("rsc/ninja/jump/"+ name + addons[i] + "/links", jumpDelay);
-            sprites[i][3] = new Sprite("rsc/ninja/jump/" + name + addons[i] + "/rechts", jumpDelay);
+            sprites[i][0] = new Sprite("rsc/ninja/"+ name + addons[i] + "/links", delay,walkOffset);
+            sprites[i][1] = new Sprite("rsc/ninja/" + name + addons[i] + "/rechts", delay,walkOffset);
+            sprites[i][2] = new Sprite("rsc/ninja/jump/"+ name + addons[i] + "/links", jumpDelay,jumpOffset);
+            sprites[i][3] = new Sprite("rsc/ninja/jump/" + name + addons[i] + "/rechts", jumpDelay,jumpOffset);
         }
         for(int i = 1; i < addonImages.length; i++){
-            addonImages[i] = new Sprite("rsc/addOn/" + addons[i], delay);
+            addonImages[i] = new Sprite("rsc/addOn/" + addons[i], delay,addonOffset);
         }
 
     }
@@ -48,7 +52,7 @@ public class Character {
     /**
      * Menu only! leftWalk-animation.
      * Stops the current Addon-animation change it and starts the new animation.
-     * @param direction
+     * @param direction indicating of left(-1) or right(1) arrow is pressed to choose addon
      */
     public void changeAddon(int direction) {
         this.getWalkLeft().stopSprite();

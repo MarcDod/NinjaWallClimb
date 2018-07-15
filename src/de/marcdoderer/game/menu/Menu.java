@@ -44,7 +44,7 @@ public class Menu extends State {
 
     /**
      * swap the current character. Stops the old animation and starts the new one.
-     * @param direction
+     * @param direction indicating of left(-1) or right(1) arrow is pressed to choose addon
      */
     private void changeCharacter(int direction){
         characters[currentCharacter].getWalkLeft().stopSprite();
@@ -209,8 +209,8 @@ public class Menu extends State {
             buttons[4] = new Button(Gui.SCREEN_WIDTH / 2 - 75, 200, "rsc/menü/cityTheme/buttons/play", "Play", this);
             buttons[5] = new Button(Gui.SCREEN_WIDTH / 2 - 75, 340, "rsc/menü/cityTheme/buttons/quit", "Quit", this);
 
-            background[0] = new Sprite("rsc/menü/cityTheme/background/backgroundLeft", 140);
-            background[1] = new Sprite("rsc/menü/cityTheme/background/backgroundRight", 140);
+            background[0] = new Sprite("rsc/menü/cityTheme/background/backgroundLeft", 140,0);
+            background[1] = new Sprite("rsc/menü/cityTheme/background/backgroundRight", 140,0);
 
 
             for(Sprite s: background){
@@ -234,7 +234,9 @@ public class Menu extends State {
                 for(int i = 0; i < addons.length(); i++){
                     addonStrings[i + 1] = addons.getString(i);
                 }
-                characters[j] = new Character(character.getString("name"), addonStrings, character.getInt("delay"), character.getInt("jumpDelay"));
+                characters[j] = new Character(character.getString("name"), addonStrings,
+                        character.getInt("delay"), character.getInt("jumpDelay"),
+                        character.getInt("walkOffset"),character.getInt("jumpOffset"),0);
             }
 
 

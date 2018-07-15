@@ -117,7 +117,7 @@ public class Game extends State {
     public void init() {
         this.pause = false;
         try{
-            this.background = new Sprite("rsc/wallpaper/blueCity", 80);
+            this.background = new Sprite("rsc/wallpaper/blueCity", 80,0);
             background.startSprite();
             BufferedImage[] walls = Utils.loadPictures("rsc/wallpaper/wall");
             Wall.loadWalls(walls);
