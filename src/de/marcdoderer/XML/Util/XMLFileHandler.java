@@ -1,4 +1,4 @@
-package de.marcdoderer.XML;
+package de.marcdoderer.XML.Util;
 
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
