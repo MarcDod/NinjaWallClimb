@@ -13,6 +13,7 @@ public class Sprite {
     private int loopOffset;
     private int currentPicture;
     private Timer t;
+    private int delay;
 
     /**
      * loads every Image of the animation and creates a timer for the animation.
@@ -20,7 +21,8 @@ public class Sprite {
     public Sprite(String path, int spriteDelay, int loopOffset) throws IllegalArgumentException, IOException{
         this.loopOffset = loopOffset;
         sprites = Utils.loadPictures(path);
-        this.t = new Timer(spriteDelay, actionEvent -> changeSprite());
+        this.delay = spriteDelay;
+        this.t = new Timer(this.delay, actionEvent ->  changeSprite());
     }
 
 
@@ -39,11 +41,20 @@ public class Sprite {
         t.stop();
     }
 
+    public void speedUp(int delay){
+        t.setDelay(this.delay / delay);
+    }
+
+    public void normalDelay(){
+        t.setDelay(this.delay);
+    }
+
     /**
      * Starts the animation
      */
     public void startSprite(){
         if(t.isRunning()) return;
+        setCurrentPicture(0);
         t.start();
     }
 

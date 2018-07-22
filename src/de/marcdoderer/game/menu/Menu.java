@@ -175,7 +175,7 @@ public class Menu extends State {
     }
 
     @Override
-    public void ressume() {
+    public void revert() {
         for(Sprite s : background){
             s.startSprite();
         }

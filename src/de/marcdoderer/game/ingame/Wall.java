@@ -8,10 +8,18 @@ import java.awt.image.BufferedImage;
 
 public class Wall {
     private static BufferedImage[] walls;
-    private static int speed = 10;
+    private static int normalSpeed = 10;
+    private static int speed = normalSpeed;
 
     private int x, y;
     private BufferedImage currentImage;
+
+    public static void setSpeed(int speed){
+        Wall.speed = speed;
+    }
+    public static int getNormalSpeed(){
+        return Wall.normalSpeed;
+    }
 
     public Wall(int x,int y){
         this.x = x;
@@ -34,8 +42,9 @@ public class Wall {
     }
 
     public int getWidth(){
-        return currentImage.getWidth();
+        return this.currentImage.getWidth();
     }
+    public int getX(){ return this.x; }
 
     public static void loadWalls(BufferedImage[] walls){
         Wall.walls = walls;

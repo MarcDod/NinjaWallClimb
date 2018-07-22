@@ -68,7 +68,7 @@ public class StateManager {
     public void popState(){
         this.states.peek().cleanUp();
         this.states.pop();
-        this.states.peek().ressume();
+        this.states.peek().revert();
     }
 
 

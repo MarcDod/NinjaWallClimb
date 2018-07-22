@@ -37,6 +37,6 @@ public abstract class State {
     public abstract void mouseReleased(MouseEvent e);
     public abstract void actionPerformed(String ID);
     public abstract void cleanUp();
-    public abstract void ressume();
+    public abstract void revert();
 
 }

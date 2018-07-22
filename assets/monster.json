@@ -2,9 +2,9 @@
 
   "name" : "monster",
   "delay": 80,
-  "jumpDelay": 20,
+  "jumpDelay": 40,
   "walkOffset": 0,
-  "jumpOffset":0,
+  "jumpOffset": 2,
   "AddOns": [
       "Bandana"
   ]

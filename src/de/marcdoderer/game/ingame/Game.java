@@ -1,7 +1,9 @@
 package de.marcdoderer.game.ingame;
 
 import de.marcdoderer.game.entities.Character;
-import de.marcdoderer.game.entities.Ninja;
+import de.marcdoderer.game.entities.ninja.Ninja;
+import de.marcdoderer.game.entities.ninja.skill.Rampage;
+import de.marcdoderer.game.entities.ninja.skill.Skill;
 import de.marcdoderer.game.main.Gui;
 import de.marcdoderer.game.states.State;
 import de.marcdoderer.game.states.StateManager;
@@ -24,7 +26,12 @@ public class Game extends State {
 
     public Game(StateManager stm, Character character) {
         super(stm);
-        this.ninja = new Ninja(character, this.walls[0].getWidth(), Gui.SCREEN_HEIGHT / 2 + Gui.SCREEN_HEIGHT / 6, walls[0].getWidth(), Gui.SCREEN_WIDTH - walls[walls.length - 1].getWidth());
+        this.ninja = new Ninja(character,this.walls[0].getX() + this.walls[0].getWidth(), Gui.SCREEN_HEIGHT / 2 + Gui.SCREEN_HEIGHT / 6, walls[walls.length - 1].getX(), 30);
+
+        Skill[] skills = new Skill[1];
+        skills[0] = new Rampage(ninja);
+        this.ninja.setSkills(skills);
+
         ninja.startSprite();
     }
 
@@ -34,17 +41,20 @@ public class Game extends State {
         if(pause) return;
 
         ninja.update();
+
         for(Wall w: walls){
             w.update();
         }
 
 
-        if(ninja.getState() == Ninja.STATE.WALK) return;
-        if (ninja.hit(new int[]{Gui.SCREEN_WIDTH - walls[walls.length - 1].getWidth(),
-                0, walls[0].getWidth(), Gui.SCREEN_HEIGHT}) || ninja.hit(new int[]{0,
-                0, walls[0].getWidth(), Gui.SCREEN_HEIGHT})) {
-            ninja.jumpOff();
-        }
+
+        if(ninja.getState() != Ninja.STATE.JUMP && ninja.getState() != Ninja.STATE.DOUBLE_JUMP) return;
+        if (ninja.hit
+                (new int[]{walls[walls.length - 1].getX(), 0, walls[walls.length - 1].getWidth(), Gui.SCREEN_HEIGHT}))
+            ninja.jumpOff(walls[walls.length - 1].getX());
+        else if(ninja.hit(new int[]{walls[0].getX(), 0, walls[0].getWidth(), Gui.SCREEN_HEIGHT}))
+            ninja.jumpOff(walls[0].getX() + walls[0].getWidth());
+
     }
 
     @Override
@@ -57,27 +67,66 @@ public class Game extends State {
         }
 
         this.ninja.render(g);
+
+
+        g.setColor(Color.green);
+        g.fillRect(0, Gui.SCREEN_HEIGHT - 5, ninja.getUntouchable(), 5);
+
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyChar()){
+        if (!pause)
+            ninja.keyPressed(e);
+
+        switch(e.getKeyCode()){
             case KeyEvent.VK_BACK_SPACE:
                 stm.popState();
-                break;
-            case KeyEvent.VK_SPACE:
-                if (pause) break;
-                ninja.jump();
                 break;
             case KeyEvent.VK_ESCAPE:
                 pause = !pause;
                 if(!pause)
-                    ressume();
+                    revert();
                 else
                     cleanUp();
                 break;
+            case KeyEvent.VK_F:
+                ninja.activateSkill(300, 0);
+                break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void cleanUp() {
+        ninja.stopSprite();
+        background.stopSprite();
+    }
+
+    @Override
+    public void revert() {
+        ninja.startSprite();
+        background.startSprite();
+    }
+
+    @Override
+    public void init() {
+        this.pause = false;
+
+        try{
+            this.background = new Sprite("rsc/wallpaper/blueCity", 80,0);
+            background.startSprite();
+            BufferedImage[] walls = Utils.loadPictures("rsc/wallpaper/wall");
+            Wall.loadWalls(walls);
+            this.walls = new Wall[6];
+            for(int i = 0; i < this.walls.length; i++){
+                int x = (i < this.walls.length / 2) ? 0 : Gui.SCREEN_WIDTH - this.walls[i - 1].getWidth();
+                int y = (i < this.walls.length / 2) ? i : i - 3;
+                this.walls[i] = new Wall(x, (y - 1) * (Gui.SCREEN_HEIGHT / 2));
+            }
+        }catch(IllegalArgumentException | IOException e){
+            e.printStackTrace();
         }
     }
 
@@ -99,36 +148,5 @@ public class Game extends State {
     @Override
     public void actionPerformed(String ID) {
 
-    }
-
-    @Override
-    public void cleanUp() {
-        ninja.stopSprite();
-        background.stopSprite();
-    }
-
-    @Override
-    public void ressume() {
-        ninja.startSprite();
-        background.startSprite();
-    }
-
-    @Override
-    public void init() {
-        this.pause = false;
-        try{
-            this.background = new Sprite("rsc/wallpaper/blueCity", 80,0);
-            background.startSprite();
-            BufferedImage[] walls = Utils.loadPictures("rsc/wallpaper/wall");
-            Wall.loadWalls(walls);
-            this.walls = new Wall[6];
-            for(int i = 0; i < this.walls.length; i++){
-                int x = (i < this.walls.length / 2) ? 0 : Gui.SCREEN_WIDTH - this.walls[i - 1].getWidth();
-                int y = (i < this.walls.length / 2) ? i : i - 3;
-                this.walls[i] = new Wall(x, (y - 1) * (Gui.SCREEN_HEIGHT / 2));
-            }
-        }catch(IllegalArgumentException | IOException e){
-            e.printStackTrace();
-        }
     }
 }
