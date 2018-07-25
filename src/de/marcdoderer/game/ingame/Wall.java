@@ -41,6 +41,10 @@ public class Wall {
         }
     }
 
+    /**
+     *
+     * @return the width of the currentImage
+     */
     public int getWidth(){
         return this.currentImage.getWidth();
     }

@@ -1,0 +1,9 @@
+{
+  "name": "balcony",
+  "Offset": 5,
+  "spriteDelay": 30,
+  "number": 3,
+  "species": [
+        "default"
+  ]
+}

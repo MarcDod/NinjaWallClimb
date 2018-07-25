@@ -4,6 +4,8 @@ import de.marcdoderer.game.entities.Character;
 import de.marcdoderer.game.entities.ninja.Ninja;
 import de.marcdoderer.game.entities.ninja.skill.Rampage;
 import de.marcdoderer.game.entities.ninja.skill.Skill;
+import de.marcdoderer.game.entities.obstacle.Balcony;
+import de.marcdoderer.game.entities.obstacle.ObstacleManager;
 import de.marcdoderer.game.main.Gui;
 import de.marcdoderer.game.states.State;
 import de.marcdoderer.game.states.StateManager;
@@ -21,9 +23,16 @@ public class Game extends State {
     private Ninja ninja;
     private Sprite background;
     private Wall walls[];
+    private ObstacleManager obstacleManager;
 
     private boolean pause;
+    private int dmgTaken;
 
+    /**
+     *  Initialize a new Ninja with his skills and starts its animation sprite.
+     * @param stm StateManager which is controlling the States.
+     * @param character the character sprites of the ninja.
+     */
     public Game(StateManager stm, Character character) {
         super(stm);
         this.ninja = new Ninja(character,this.walls[0].getX() + this.walls[0].getWidth(), Gui.SCREEN_HEIGHT / 2 + Gui.SCREEN_HEIGHT / 6, walls[walls.length - 1].getX(), 30);
@@ -35,63 +44,92 @@ public class Game extends State {
         ninja.startSprite();
     }
 
-    @Override
-    public void update() {
-
-        if(pause) return;
-
-        ninja.update();
-
-        for(Wall w: walls){
-            w.update();
-        }
-
-
-
+    /**
+     *  If the ninja hits the wall it gets out of his jump;
+     */
+    private void manageNinja(){
         if(ninja.getState() != Ninja.STATE.JUMP && ninja.getState() != Ninja.STATE.DOUBLE_JUMP) return;
         if (ninja.hit
                 (new int[]{walls[walls.length - 1].getX(), 0, walls[walls.length - 1].getWidth(), Gui.SCREEN_HEIGHT}))
             ninja.jumpOff(walls[walls.length - 1].getX());
         else if(ninja.hit(new int[]{walls[0].getX(), 0, walls[0].getWidth(), Gui.SCREEN_HEIGHT}))
             ninja.jumpOff(walls[0].getX() + walls[0].getWidth());
+    }
+
+    /**
+     * pause the ninja, the background and all obstacle;
+     */
+    private void pause(){
+        this.ninja.pauseSprite();
+        this.background.pauseSprite();
+        this.obstacleManager.pause();
+    }
+
+    @Override
+    public void update() {
+        if(this.pause) return;
+
+        if(this.dmgTaken != 0)
+            this.dmgTaken--;
+
+
+        this.ninja.update();
+        manageNinja();
+
+        for(Wall w: this.walls){
+            w.update();
+        }
+
+        this.obstacleManager.update();
+        if(this.obstacleManager.lookForHit(this.ninja))
+            this.dmgTaken += 5;
+
 
     }
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(background.getSprite(), 0, 0, null);
-        g.drawImage(background.getSprite(), background.getSprite().getWidth(), 0, null);
+        g.drawImage(this.background.getSprite(), 0, 0, null);
+        g.drawImage(this.background.getSprite(), this.background.getSprite().getWidth(), 0, null);
 
-        for(Wall w: walls){
+        for(Wall w: this.walls){
             w.render(g);
         }
+
+        this.obstacleManager.render(g);
 
         this.ninja.render(g);
 
 
         g.setColor(Color.green);
-        g.fillRect(0, Gui.SCREEN_HEIGHT - 5, ninja.getUntouchable(), 5);
+        g.fillRect(0, Gui.SCREEN_HEIGHT - 5, this.ninja.getUntouchable(), 5);
+
+
+        if(dmgTaken == 0) return;
+
+        g.setColor(new Color(255, 0, 0, 30));
+        g.fillRect(0, 0, Gui.SCREEN_WIDTH, Gui.SCREEN_HEIGHT);
 
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!pause)
-            ninja.keyPressed(e);
+        if (!this.pause)
+            this.ninja.keyPressed(e);
 
         switch(e.getKeyCode()){
             case KeyEvent.VK_BACK_SPACE:
-                stm.popState();
+                this.stm.popState();
                 break;
             case KeyEvent.VK_ESCAPE:
-                pause = !pause;
-                if(!pause)
+                this.pause = !this.pause;
+                if(!this.pause)
                     revert();
                 else
-                    cleanUp();
+                    pause();
                 break;
             case KeyEvent.VK_F:
-                ninja.activateSkill(300, 0);
+                this.ninja.activateSkill(300, 0);
                 break;
             default:
                 break;
@@ -100,19 +138,24 @@ public class Game extends State {
 
     @Override
     public void cleanUp() {
-        ninja.stopSprite();
-        background.stopSprite();
+        this.ninja.stopSprite();
+        this.background.stopSprite();
+        this.obstacleManager.cleanUp();
     }
 
     @Override
     public void revert() {
-        ninja.startSprite();
-        background.startSprite();
+        this.ninja.startSprite();
+        this.background.startSprite();
+        this.obstacleManager.resume();
     }
+
 
     @Override
     public void init() {
         this.pause = false;
+        this.dmgTaken = 0;
+        obstacleManager = new ObstacleManager();
 
         try{
             this.background = new Sprite("rsc/wallpaper/blueCity", 80,0);
@@ -125,9 +168,19 @@ public class Game extends State {
                 int y = (i < this.walls.length / 2) ? i : i - 3;
                 this.walls[i] = new Wall(x, (y - 1) * (Gui.SCREEN_HEIGHT / 2));
             }
+
+            // Load Obstacles
+            Sprite[] balconySpritesLeft =  Utils.loadObstacleSprite("balcony","left");
+            Sprite[] balconySpritesRight =  Utils.loadObstacleSprite("balcony","right");
+
+            // add Obstacles
+            ObstacleManager.addNewObstacle(new Balcony(balconySpritesLeft, this.walls[0].getX() + this.walls[0].getWidth(), true), 3);
+            ObstacleManager.addNewObstacle(new Balcony(balconySpritesRight, this.walls[this.walls.length - 1].getX() - balconySpritesRight[0].getSprite().getWidth(), false), 3);
+
         }catch(IllegalArgumentException | IOException e){
             e.printStackTrace();
         }
+
     }
 
     @Override

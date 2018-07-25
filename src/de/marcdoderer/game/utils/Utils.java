@@ -1,5 +1,9 @@
 package de.marcdoderer.game.utils;
 
+import de.marcdoderer.json.JSONUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,7 +22,7 @@ public class Utils {
     public static BufferedImage[] loadPictures(String path) throws IllegalArgumentException, IOException {
         File folder = new File(path);
         if(!folder.isDirectory()){
-            throw new IllegalArgumentException("Sprite path is not valid");
+            throw new IllegalArgumentException(path + " Sprite path is not valid");
         }
 
         FilenameFilter fnf = (file, s) -> s.endsWith(".png") || s.endsWith(".gif") || s.endsWith(".jpg");
@@ -30,6 +34,24 @@ public class Utils {
             sprites[i] = (ImageIO.read(folder.listFiles(fnf)[i]));
         }
 
+        return sprites;
+    }
+
+    public static Sprite[] loadObstacleSprite(String obstacleName, String side) throws IllegalArgumentException, IOException {
+        File f = new File("assets/obstacle/"+ obstacleName+ ".json");
+
+        if(!f.exists()) throw new IllegalArgumentException(obstacleName + ".json not found");
+
+        JSONObject obstacleJSON = JSONUtils.getJSONObjectFromFile(f);
+        JSONArray species = obstacleJSON.getJSONArray("species");
+        String[] speciesStrings = new String[species.length()];
+        for (int i = 0; i < species.length(); i++) {
+            speciesStrings[i] = species.getString(i);
+        }
+        Sprite[] sprites =  new Sprite[speciesStrings.length];
+        for (int i = 0; i < speciesStrings.length; i++) {
+            sprites[i] = new Sprite("rsc/obstacle/" + obstacleJSON.getString("name") + "/" + speciesStrings[i] + "/" + side, obstacleJSON.getInt("spriteDelay"), obstacleJSON.getInt("Offset"));
+        }
         return sprites;
     }
 

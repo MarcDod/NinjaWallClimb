@@ -1,6 +1,7 @@
 package de.marcdoderer.game.entities.ninja.skill;
 
 import de.marcdoderer.game.entities.ninja.Ninja;
+import de.marcdoderer.game.entities.obstacle.ObstacleManager;
 import de.marcdoderer.game.ingame.Wall;
 
 public class Rampage extends Skill {
@@ -23,7 +24,7 @@ public class Rampage extends Skill {
             this.ninja.setY(ninja.getStartY());
 
             Wall.setSpeed(Wall.getNormalSpeed());
-
+            ObstacleManager.setObstaclesSpeed(Wall.getNormalSpeed());
             return;
         }
 
@@ -48,6 +49,7 @@ public class Rampage extends Skill {
         ninja.setUntouchable(duration + 50);
 
         Wall.setSpeed(Wall.getNormalSpeed() + walkSpeed);
+        ObstacleManager.setObstaclesSpeed(Wall.getNormalSpeed() + walkSpeed);
     }
 
     private void init(){

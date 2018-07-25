@@ -1,18 +1,16 @@
 package de.marcdoderer.game.entities.ninja;
 
 import de.marcdoderer.game.entities.Character;
-import de.marcdoderer.game.entities.Enitity;
+import de.marcdoderer.game.entities.Entity;
 import de.marcdoderer.game.entities.ninja.skill.Skill;
-import de.marcdoderer.game.utils.Sprite;
 import de.marcdoderer.game.utils.Utils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class Ninja extends Enitity {
+public class Ninja extends Entity {
 
     private Character character;
-    private Sprite currentSprite;
 
     private int startY;
     private double[] parable;
@@ -26,6 +24,8 @@ public class Ninja extends Enitity {
 
     private int untouchable;
 
+    private int life;
+
     public enum STATE{
         WALK,
         JUMP,
@@ -37,23 +37,23 @@ public class Ninja extends Enitity {
     public Ninja(Character character, int x, int y, int wallRight, int jumpHeight){
         super(x, y);
         init();
-        this.character = character;
+        this.character = character.getInstanceOf();
         this.setSprite(1);
         int gap = wallRight - x;
         this.parable = Utils.PARABEL_RECHNEN(x, this.y,
-                (x + (gap / 2)) - currentSprite.getSprite().getWidth(), this.y - jumpHeight,
-                wallRight - currentSprite.getSprite().getWidth(), this.y);
+                (x + (gap / 2)) - sprite.getSprite().getWidth(), this.y - jumpHeight,
+                wallRight - sprite.getSprite().getWidth(), this.y);
     }
 
     private void setSprite(int speedUp){
-        if(this.currentSprite != null) this.stopSprite();
+        if(this.sprite != null) this.stopSprite();
         if(state == STATE.JUMP || this.state == STATE.DOUBLE_JUMP)
-            this.currentSprite = (this.watchLeft) ? this.character.getJumpLeft() : this.character.getJumpRight();
+            this.sprite = (this.watchLeft) ? this.character.getJumpLeft() : this.character.getJumpRight();
         else
-            this.currentSprite = (this.watchLeft) ? this.character.getWalkLeft() : this.character.getWalkRight();
+            this.sprite = (this.watchLeft) ? this.character.getWalkLeft() : this.character.getWalkRight();
 
         if(speedUp > 1)
-            this.currentSprite.speedUp(speedUp);
+            this.sprite.speedUp(speedUp);
 
         this.startSprite();
     }
@@ -65,12 +65,25 @@ public class Ninja extends Enitity {
         this.setSprite(1);
     }
 
-    public void startSprite(){
-        this.currentSprite.startSprite();
+    /**
+     * if the ninja is not untouchable life gets decreased
+     * @param dmg dmg witch the ninja takes
+     * @return return true if life got decreased else false;
+     */
+    public boolean takeDMG(int dmg){
+        if(this.untouchable != 0) return false;
+        //this.life -= dmg;
+        return true;
     }
 
+    public void startSprite(){
+        this.sprite.startSprite();
+    }
+
+    public void pauseSprite() { this.sprite.pauseSprite(); }
+
     public void stopSprite(){
-        this.currentSprite.stopSprite();
+        this.sprite.stopSprite();
     }
 
     public void setSkills(Skill[] skills){
@@ -87,7 +100,7 @@ public class Ninja extends Enitity {
             }
         }
         this.setSprite(speed);
-        this.x = (watchLeft) ? wallX : wallX - this.currentSprite.getSprite().getWidth();
+        this.x = (watchLeft) ? wallX : wallX - this.sprite.getSprite().getWidth();
         this.y = this.startY;
     }
 
@@ -113,8 +126,8 @@ public class Ninja extends Enitity {
     public boolean hit(int[] hitbox) {
 
         boolean temp = false;
-        if (this.x <= hitbox[0] + hitbox[2] && x + this.currentSprite.getSprite().getWidth()
-                >= hitbox[0] && this.y + this.currentSprite.getSprite().getHeight() >= hitbox[1] && this.y
+        if (this.x <= hitbox[0] + hitbox[2] && x + this.sprite.getSprite().getWidth()
+                >= hitbox[0] && this.y + this.sprite.getSprite().getHeight() >= hitbox[1] && this.y
                 <= hitbox[1] + hitbox[3]) {
             temp = true;
         }
@@ -138,11 +151,16 @@ public class Ninja extends Enitity {
     }
 
     public void slowDown(){
-        this.currentSprite.normalDelay();
+        this.sprite.normalDelay();
         this.state = STATE.WALK;
     }
 
+    @Override
     public void update(){
+        if(this.life == 0){
+            return;
+        }
+
          if(untouchable != 0)
             this.untouchable--;
 
@@ -166,9 +184,10 @@ public class Ninja extends Enitity {
         }
     }
 
+    @Override
     public void render(Graphics g){
-        g.drawImage(currentSprite.getSprite(), this.x, this.y, null);
-        g.drawRect(this.x, this.y, this.currentSprite.getSprite().getWidth(), this.currentSprite.getSprite().getWidth());
+        g.drawImage(sprite.getSprite(), this.x, this.y, null);
+        g.drawRect(this.x, this.y, this.sprite.getSprite().getWidth(), this.sprite.getSprite().getWidth());
     }
 
     public void keyPressed(KeyEvent e){
@@ -190,6 +209,6 @@ public class Ninja extends Enitity {
         this.jumpable = true;
         this.state = STATE.WALK;
         this.skills  = null;
-
+        this.life = 3;
     }
 }

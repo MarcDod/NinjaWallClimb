@@ -217,7 +217,7 @@ public class Menu extends State {
                 s.startSprite();
             }
 
-            File f = new File("assets");
+            File f = new File("assets/ninja");
 
             if(!f.exists()) throw new IllegalArgumentException("Folder not found");
 

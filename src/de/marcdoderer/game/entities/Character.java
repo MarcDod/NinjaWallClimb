@@ -26,20 +26,33 @@ public class Character {
     public Character(String name, String[] addons, int delay, int jumpDelay, int walkOffset, int jumpOffset, int addonOffset) throws IOException {
         this.addon = 0;
         this.addonImages = new Sprite[addons.length];
-        sprites = new Sprite[addons.length + 1][];
-        for(int i = 0; i < addons.length; i++){
+        sprites = new Sprite[addons.length][];
+        for (int i = 0; i < sprites.length; i++) {
             sprites[i] = new Sprite[4];
-            sprites[i][0] = new Sprite("rsc/ninja/"+ name + addons[i] + "/links", delay,walkOffset);
-            sprites[i][1] = new Sprite("rsc/ninja/" + name + addons[i] + "/rechts", delay,walkOffset);
-            sprites[i][2] = new Sprite("rsc/ninja/jump/"+ name + addons[i] + "/links", jumpDelay,jumpOffset);
-            sprites[i][3] = new Sprite("rsc/ninja/jump/" + name + addons[i] + "/rechts", jumpDelay,jumpOffset);
+            sprites[i][0] = new Sprite("rsc/ninja/" + name + addons[i] + "/links", delay, walkOffset);
+            sprites[i][1] = new Sprite("rsc/ninja/" + name + addons[i] + "/rechts", delay, walkOffset);
+            sprites[i][2] = new Sprite("rsc/ninja/jump/" + name + addons[i] + "/links", jumpDelay, jumpOffset);
+            sprites[i][3] = new Sprite("rsc/ninja/jump/" + name + addons[i] + "/rechts", jumpDelay, jumpOffset);
         }
-        for(int i = 1; i < addonImages.length; i++){
-            addonImages[i] = new Sprite("rsc/addOn/" + addons[i], delay,addonOffset);
+        for (int i = 1; i < addonImages.length; i++) {
+            addonImages[i] = new Sprite("rsc/addOn/" + addons[i], delay, addonOffset);
         }
 
     }
 
+    private Character(Sprite[][] sprites, Sprite[] addonImages,int addon){
+        Sprite[][] tempSprite = new Sprite[sprites.length][];
+        for(int i = 0; i < tempSprite.length; i++){
+            int length = sprites[i].length;
+            tempSprite[i] = new Sprite[length];
+            for(int j = 0; j < length ; j++){
+                tempSprite[i][j] = sprites[i][j];
+            }
+        }
+        this.sprites = tempSprite;
+        this.addon = addon;
+        this.addonImages = addonImages;
+    }
     /**
      * Returns the current addon sprite.
      * Null if no addon is selected.
@@ -69,6 +82,10 @@ public class Character {
             this.addonImages[addon].startSprite();
     }
 
+
+    public Character getInstanceOf(){
+        return new Character(this.sprites, this.addonImages ,this.addon);
+    }
 
     public Sprite getWalkLeft(){
         return this.sprites[addon][0];

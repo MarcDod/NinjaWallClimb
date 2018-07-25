@@ -25,20 +25,36 @@ public class Sprite {
         this.t = new Timer(this.delay, actionEvent ->  changeSprite());
     }
 
+    private Sprite(BufferedImage[] sprites, int spriteDelay, int loopOffset){
+        this.loopOffset = loopOffset;
+        this.sprites = sprites;
+        this.delay = spriteDelay;
+        this.t = new Timer(this.delay, actionEvent ->  changeSprite());
+    }
 
     /**
      * Change the Image to the next Image.
      */
     private void changeSprite(){
+        System.out.println("h");
         currentPicture = (currentPicture < sprites.length - 1) ? (currentPicture += 1) : loopOffset;
     }
 
     /**
-     * Stops the animation.
+     * Stops the animation and reset the sprite
      */
     public void stopSprite(){
         if(!t.isRunning()) return;
         t.stop();
+        setCurrentPicture(0);
+    }
+
+    /**
+     * Stops the animation without reset the animation.
+     */
+    public void pauseSprite(){
+        if(!t.isRunning()) return;
+        this.t.stop();
     }
 
     public void speedUp(int delay){
@@ -54,8 +70,12 @@ public class Sprite {
      */
     public void startSprite(){
         if(t.isRunning()) return;
-        setCurrentPicture(0);
         t.start();
+    }
+
+    public Sprite getInstanceOf(){
+        t.stop();
+        return new Sprite(this.sprites, this.delay, this.loopOffset);
     }
 
     /**
