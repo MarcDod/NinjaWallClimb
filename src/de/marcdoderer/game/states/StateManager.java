@@ -32,9 +32,9 @@ public class StateManager {
 
     /**
      * Render the state on top of the Stack.
-     * @param g
+     * @param g Graphics2D
      */
-    public void render(Graphics g){
+    public void render(Graphics2D g){
         states.peek().render(g);
     }
 

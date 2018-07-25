@@ -35,7 +35,7 @@ public class Button extends MenuItem{
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(Graphics2D g) {
         int image = (this.selected) ? images.length - 1 : 0;
         if(enable)
             g.drawImage(this.images[image], x, y, null);

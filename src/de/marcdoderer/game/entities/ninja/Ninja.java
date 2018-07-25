@@ -185,7 +185,7 @@ public class Ninja extends Entity {
     }
 
     @Override
-    public void render(Graphics g){
+    public void render(Graphics2D g){
         g.drawImage(sprite.getSprite(), this.x, this.y, null);
         g.drawRect(this.x, this.y, this.sprite.getSprite().getWidth(), this.sprite.getSprite().getWidth());
     }

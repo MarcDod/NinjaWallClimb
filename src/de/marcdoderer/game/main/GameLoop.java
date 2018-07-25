@@ -42,8 +42,10 @@ public class GameLoop extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        Graphics2D g2d = (Graphics2D) g;
+
         g.clearRect(0, 0, Gui.SCREEN_WIDTH, Gui.SCREEN_HEIGHT);
-        render(g);
+        render(g2d);
     }
 
     /**
@@ -86,7 +88,7 @@ public class GameLoop extends JPanel implements Runnable {
      * render the current State
      * @param g
      */
-    private void render(Graphics g){
+    private void render(Graphics2D g){
 
         stm.render(g);
     }

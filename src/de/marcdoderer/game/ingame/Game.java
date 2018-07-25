@@ -88,7 +88,7 @@ public class Game extends State {
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(Graphics2D g) {
         g.drawImage(this.background.getSprite(), 0, 0, null);
         g.drawImage(this.background.getSprite(), this.background.getSprite().getWidth(), 0, null);
 

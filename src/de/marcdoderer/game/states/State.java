@@ -28,7 +28,7 @@ public abstract class State {
      * If update needs to much time it do not render
      * @param g
      */
-    public abstract void render(Graphics g);
+    public abstract void render(Graphics2D g);
 
 
     public abstract void keyPressed(KeyEvent e);

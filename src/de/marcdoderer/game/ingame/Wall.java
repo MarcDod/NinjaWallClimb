@@ -27,7 +27,7 @@ public class Wall {
         this.currentImage = walls[(int) ( Math.random()* walls.length)];
     }
 
-    public void render(Graphics g){
+    public void render(Graphics2D g){
         g.drawImage(this.currentImage, this.x, this.y, null);
     }
 

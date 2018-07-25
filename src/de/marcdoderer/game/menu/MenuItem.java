@@ -2,11 +2,9 @@ package de.marcdoderer.game.menu;
 
 import de.marcdoderer.game.utils.Utils;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -38,7 +36,7 @@ public abstract class MenuItem {
         images = Utils.loadPictures(path);
     }
 
-    public abstract void render(Graphics g);
+    public abstract void render(Graphics2D g);
 
     /**
      * returns true, if the X/Y - parameters hit the Item.

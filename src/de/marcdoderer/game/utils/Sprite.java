@@ -36,7 +36,6 @@ public class Sprite {
      * Change the Image to the next Image.
      */
     private void changeSprite(){
-        System.out.println("h");
         currentPicture = (currentPicture < sprites.length - 1) ? (currentPicture += 1) : loopOffset;
     }
 

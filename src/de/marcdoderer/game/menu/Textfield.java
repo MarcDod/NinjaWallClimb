@@ -84,7 +84,7 @@ public class Textfield extends  MenuItem{
 
 
     @Override
-    public void render(Graphics g) {
+    public void render(Graphics2D g) {
         int index = (selected) ? 1 : 0;
         g.drawImage(images[index], this.x, this.y, null);
         g.setFont(font);
