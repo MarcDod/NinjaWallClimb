@@ -1,0 +1,12 @@
+{
+
+  "name" : "monster",
+  "delay": 80,
+  "jumpDelay": 40,
+  "walkOffset": 0,
+  "jumpOffset": 2,
+  "AddOns": [
+      "Bandana"
+  ]
+
+}
